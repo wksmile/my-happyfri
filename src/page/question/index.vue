@@ -19,7 +19,7 @@
 
 <script>
   import common from '../../components/common'
-  import { mapState } from 'vuex'
+  import { mapState, mapMutations } from 'vuex'
 
   export default {
     data () {
@@ -28,20 +28,22 @@
         questTitle: null,    //  题目描述
         questDetail: null,   //  题目具体内容  []
         questLen: 0,         //  题目总数量
-        nowNode: '',          //  当前问题节点
-        isChoose: false       //  是否选择了答案
+        nowNode: '',         //  当前问题节点
+        chooseId: null       //  选择了答案的id
       }
     },
     created () {
       this.initData()
-      console.log('kkkkkkkkkkkkkkkkkkk')
     },
     computed: {
       ...mapState([
-        'question', 'answer'
+        'question', 'answer', 'chooseId'
       ])
     },
     methods: {
+      ...mapMutations([
+        'CHANGE_CHOOSEID'
+      ]),
       initData () {
         this.questLen = this.question.length
         if (this.$route.query.id > this.questLen) {
@@ -51,7 +53,7 @@
         }
       },
       chooseAnser (key) {
-        this.isChoose = true
+        this.CHANGE_CHOOSEID(key)
         this.answer.push(key)
         if (this.nowNode) {
           this.nowNode.firstElementChild.style.backgroundColor = ''
@@ -107,6 +109,5 @@
     height: 44px;
     border-radius: 22px;
     border: 2px solid white;
-
   }
 </style>

@@ -3,24 +3,14 @@
     <div class="home">
       <div class="upPage">
         <img src="../../assets/images/WechatIMG2.png">
-        <span class="week" v-if="componentPage == 'home'">{{levels}}</span>
-        <span class="week" v-else-if="componentPage == 'quest'">{{levels}}</span>
+        <span class="week">{{levelsOrMain}}</span>
       </div>
-      <div v-if="componentPage == 'home'">
-        <router-link :to="{path: '/quest', query: {id: 0}}">
-          <div class="btstart">
-            <img src="../../assets/images/1-4.png">
-          </div>
-        </router-link>
+      <div class="btstart" @click="routerPath">
+          <img :src="btnImg">
       </div>
-      <div v-if="componentPage == 'quest'">
-        <div class="btstart">
-          <img src="../../assets/images/2-2.png">
-        </div>
-        <div class="flowPage">
-          <img src="../../assets/images/2-1.png">
-          <slot name="question" :quer="this.nowQuest"></slot>
-        </div>
+      <div class="flowPage">
+        <img :src="flowImg">
+        <slot name="question" :quer="this.nowQuest"></slot>
       </div>
     </div>
   </div>
@@ -28,60 +18,63 @@
 
 <script>
   import {mapState, mapMutations} from 'vuex'
-//  import img12 from '../../assets/images/1-2.png'
-//  import img21 from '../../assets/images/2-1.png'
-//  import img14 from '../../assets/images/1-4.png'
-//  import img22 from '../../assets/images/2-2.png'
-//  import img31 from '../../assets/images/3-1.png'
+  import img12 from '../../assets/images/1-2.png'
+  import img21 from '../../assets/images/2-1.png'
+  import img14 from '../../assets/images/1-4.png'
+  import img22 from '../../assets/images/2-2.png'
+  import img31 from '../../assets/images/3-1.png'
 
   export default {
     data () {
       return {
-        questLen: 0,        //   总共的问题数量
-        levelsOrMain: '',    //   上面下拉的部分
-        queOrMain: false
+        questLen: 0,          //   总共的问题数量
+        //  queOrMain: false,  当前页面是主页面还是问题页面 false表示主页面 true表示问题的页面
+        nowanswer: null       //  当前题目的答案
       }
     },
-    prop: ['componentPage'],   // 当前页面是主页面还是问题页面 false表示主页面 true表示问题的页面
     created () {
       this.initData()
     },
     computed: {
       ...mapState([
-        'levels', 'question', 'nowQuestIndex', 'answer'
+        'levels', 'question', 'nowQuestIndex', 'myanswer', 'queOrMain', 'chooseId'
       ]),
-//      btnImg () {     // 按钮图片
-//        if (this.componentPage === 'home') {
-//          return img14
-//        } else if (this.componentPage === 'quest') {
-//          return img22
-//        } else if (this.componentPage === 'lastQuest') {
-//          return img31
-//        }
+      flowImg () {     // 中部的图片
+        return this.queOrMain ? img21 : img12
+      },
+      btnImg () {     // 按钮图片
+        return (this.nowQuestIndex === this.questLen) ? img31 : this.queOrMain ? img22 : img14
+      },
       nowQuest () {    //  当前问题页面
         if (this.nowQuestIndex > -1) {
           return this.question[this.nowQuestIndex]
         }
+      },
+      levelsOrMain () {
+        return this.queOrMain ? this.question[this.nowQuestIndex]['description'] : this.levels
       }
     },
     methods: {
       ...mapMutations([
-        'ADD_QUEST_INDEX'
+        'ADD_QUEST_INDEX', 'CHANGE_QUEORMAIN', 'SAVE_ANSER', 'CHANGE_CHOOSEID'
       ]),
       initData () {
         this.questLen = this.question.length
       },
       routerPath () {
+        if (!this.chooseId) {
+          this.SAVE_ANSER(this.nowanswer)
+          this.CHANGE_CHOOSEID(null)
+          this.nowanswer = null
+        } else {
+          alert('你还没有选择答案')
+        }
         // 根据路由判断是主页面还是问题的页面从而改变 queOrMain 的值
         let path = this.$route.path
-        if (path === '/') {
-          this.queOrMain = false
+        if (path === '/question') {
+          this.CHANGE_QUEORMAIN(true)
         } else {
-          this.queOrMain = true
-          if (this.answer[this.nowQuestIndex] === undefined) {
-            alert('你还没有选择答案')
-            return
-          }
+          this.CHANGE_QUEORMAIN(false)
         }
         let nextQuestId = this.nowQuestIndex + 1
         if (this.questLen > nextQuestId) {

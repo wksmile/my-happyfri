@@ -8,8 +8,10 @@ Vue.use(Vuex)
 const state = {
   levels: '第一周',
   nowQuestIndex: -1,    //  当前问题的id
+  chooseId: null,       //   当前选择答案的id
   score: 0,
-  answer: [],
+  queOrMain: false,     //  当前页面是主页面还是问题页面 false表示主页面 true表示问题的页面
+  myanswer: [],         //   答案
   question: [
     {
       description: '题目一',
