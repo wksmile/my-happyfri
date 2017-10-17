@@ -69,13 +69,6 @@
         } else {
           alert('你还没有选择答案')
         }
-        // 根据路由判断是主页面还是问题的页面从而改变 queOrMain 的值
-        let path = this.$route.path
-        if (path === '/question') {
-          this.CHANGE_QUEORMAIN(true)
-        } else {
-          this.CHANGE_QUEORMAIN(false)
-        }
         let nextQuestId = this.nowQuestIndex + 1
         if (this.questLen > nextQuestId) {
           this.ADD_QUEST_INDEX()

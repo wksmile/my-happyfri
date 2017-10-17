@@ -1,3 +1,13 @@
+# 说明
+
+> vue2 + vuex + vue-router的一个小项目
+
+## 待完成
+
+-[x] 目前主页面跳转存在问题
+-[x] 分数统计存在问题
+-[x] 各个题目之间选择后会互相影响
+ 
 # my-happyfri
 
 > A Vue.js project
